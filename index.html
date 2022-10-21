@@ -85,7 +85,9 @@
         <div class="pricingheading">500 cold emails</div>
         <div class="pricingdescription">Amateur-startaper</div>
         <div class="priceblock">
-          <div class="pricingprice">$450</div>
+          <a onclick="paymentRequest">
+            <div class="pricingprice">$450</div>
+          </a>
         </div>
         <div class="w-layout-grid pricingtable">
           <div id="w-node-_78e042bc-3858-3313-5f96-ca02c302c10f-2a24030a" class="pricingname">Delivery in</div>
@@ -144,5 +146,71 @@
   <script src="js/webflow.js" type="text/javascript"></script>
   <!-- [if lte IE 9]><script src="https://cdnjs.cloudflare.com/ajax/libs/placeholders/3.0.2/placeholders.min.js"></script><![endif] -->
   <script src="//code.tidio.co/nfzc2hg0ichlfv4gkhnwbtrtv0gkngos.js" async></script>
+  <script src="https://js.stripe.com/v3/"></script>
+  <script>
+    var stripe = Stripe('pk_test_51LmJ5uJeFObqsn5vxAb5ByEZrEwWTYO0wz01buIYkVNLNpIWi92bLJQYkPba3UuTxKF5TYtGA0NpjNuuZ2klyeAo00s7oCopGp', {
+      apiVersion: "2022-08-01",
+    });
+
+    var paymentRequest = stripe.paymentRequest({
+      country: 'US',
+      currency: 'usd',
+      total: {
+        label: 'Demo total',
+        amount: 1099,
+      },
+      requestPayerName: true,
+      requestPayerEmail: true,
+    });
+
+    var elements = stripe.elements();
+    var prButton = elements.create('paymentRequestButton', {
+      paymentRequest: paymentRequest,
+    });
+
+    // Check the availability of the Payment Request API first.
+    paymentRequest.canMakePayment().then(function(result) {
+      if (result) {
+        prButton.mount('#payment-request-button');
+      } else {
+        document.getElementById('payment-request-button').style.display = 'none';
+      }
+    });
+
+    paymentRequest.on('paymentmethod', function(ev) {
+    // Confirm the PaymentIntent without handling potential next actions (yet).
+    stripe.confirmCardPayment(
+      clientSecret,
+      {payment_method: ev.paymentMethod.id},
+      {handleActions: false}
+    ).then(function(confirmResult) {
+      if (confirmResult.error) {
+        // Report to the browser that the payment failed, prompting it to
+        // re-show the payment interface, or show an error message and close
+        // the payment interface.
+        ev.complete('fail');
+      } else {
+        // Report to the browser that the confirmation was successful, prompting
+        // it to close the browser payment method collection interface.
+        ev.complete('success');
+        // Check if the PaymentIntent requires any actions and if so let Stripe.js
+        // handle the flow. If using an API version older than "2019-02-11"
+        // instead check for: `paymentIntent.status === "requires_source_action"`.
+        if (confirmResult.paymentIntent.status === "requires_action") {
+          // Let Stripe.js handle the rest of the payment flow.
+          stripe.confirmCardPayment(clientSecret).then(function(result) {
+            if (result.error) {
+              // The payment failed -- ask your customer for a new payment method.
+            } else {
+              // The payment has succeeded.
+            }
+          });
+        } else {
+          // The payment has succeeded.
+        }
+      }
+    });
+  });
+  </script>
 </body>
 </html>
