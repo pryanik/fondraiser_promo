@@ -619,9 +619,10 @@ figcaption {
   border-bottom-left-radius: 32px;
   border-bottom-right-radius: 32px;
   background-color: #f4f4f4;
-  background-image: url('../images/header.png');
+  background-image: url('../images/header-min.webp');
   background-position: 50% 0%;
   background-size: cover;
+  background-attachment: fixed;
   box-shadow: 0 0 80px 0 rgba(12, 109, 255, 0.4);
   color: #fff;
 }
@@ -1509,6 +1510,7 @@ figcaption {
   background-image: url('../images/header_invite-onlly.png');
   background-position: 0px 0px;
   background-size: cover;
+  background-attachment: fixed;
   box-shadow: 0 24px 80px 0 rgba(12, 109, 255, 0.4);
 }
 
@@ -1831,6 +1833,24 @@ figcaption {
 
 .ph {
   margin-top: 16px;
+}
+
+.link {
+  color: #fff;
+  text-decoration: none;
+}
+
+.link:hover {
+  color: #fff;
+}
+
+.link-2 {
+  color: #fff;
+  text-decoration: none;
+}
+
+.link-2:hover {
+  color: #fff;
 }
 
 @media screen and (max-width: 991px) {
